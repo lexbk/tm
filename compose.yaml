@@ -1,0 +1,38 @@
+name: tm
+
+services:
+  frontend:
+    image: ${DOCKER_FRONTEND_IMAGE}:${APP_VER}
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_NODE_IMAGE=${DOCKER_NODE_IMAGE}
+    ports:
+      - "8000:80"
+    volumes:
+      - "./env:/app/.env"
+    networks:
+      - tm-net
+
+  backend:
+    image: ${DOCKER_BACKEND_IMAGE}:${APP_VER}
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      args:
+        - DOCKER_PYTHON_IMAGE=${DOCKER_PYTHON_IMAGE}
+    ports:
+      - "8001:8001"
+    volumes:
+      - "./env:/app/.env"
+      - "backend-data:/app/data"
+    networks:
+      - tm-net
+
+networks:
+  tm-net:
+    external: true
+
+volumes:
+  backend-data: {}

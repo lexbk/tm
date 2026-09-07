@@ -1,0 +1,27 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.python-version
+uv.lock
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Tools
+.mypy_cache/
+.pycache/
+.pytest_cache/
+.ruff_cache/
+
+/data/
+/log/
+
+.env

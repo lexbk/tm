@@ -1,0 +1,16 @@
+name: tm
+
+services:
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      args:
+        DOCKER_NODE_IMAGE: ${DOCKER_NODE_IMAGE}
+        DOCKER_NGINX_IMAGE: ${DOCKER_NGINX_IMAGE}
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+      args:
+        DOCKER_PYTHON_IMAGE: ${DOCKER_PYTHON_IMAGE}

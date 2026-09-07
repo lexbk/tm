@@ -1,0 +1,184 @@
+[project]
+name = "task-manager"
+version = "0.1.0"
+description = "Simple Task Manager"
+readme = "README.md"
+authors = [
+    { name = "Alex", email = "a@l.ex" }
+]
+requires-python = ">=3.13"
+
+# Deps
+
+dependencies = [
+    "django>=6.1.1",
+    "django-cors-headers>=4.9.0",
+    "django-filter>=26.1",
+    "django-oauth-toolkit>=3.4.1",
+    "djangorestframework>=3.18.0",
+    "djangorestframework-simplejwt>=5.5.1",
+    "drf-nested-routers>=0.95.3",
+    "drf-spectacular>=0.30.0",
+    "drf-yasg>=1.21.15",
+    "gunicorn>=26.2.0",
+    "orjson>=3.12.0",
+    "psycopg2-binary>=2.9.12",
+    "python-dotenv>=1.2.3",
+]
+
+[dependency-groups]
+dev = [
+    "django-filter-stubs>=0.1.3",
+    "django-stubs>=6.1.0",
+    "djangorestframework-stubs>=3.18.1",
+    "factory-boy>=3.3.3",
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.14.0",
+    "ruff>=0.16.6",
+]
+
+# Build
+
+#[build-system]
+#requires = ["setuptools>=61.0.0"]
+#build-backend = "setuptools.build_meta"
+
+#[tool.setuptools]
+#packages = ["config", "apps"]
+
+[tool.pytest]
+DJANGO_SETTINGS_MODULE = "config.settings"
+
+[tool.coverage]
+run.omit = [
+    '*tests*',
+    'test_*',
+    '*/migrations/*',
+    '**/urls.py',
+    'config/__init__.py',
+    'config/asgi.py',
+    'config/settings.py',
+    'config/urls.py',
+    'config/wsgi.py',
+    'manage.py',
+]
+
+
+# ==================================================================
+# Ruff
+# ==================================================================
+
+[tool.ruff]
+
+# Target Python version (e.g., "py38", "py311")
+target-version = "py313"
+
+# Maximum line length - Ruff will flag lines longer than this.
+line-length = 120
+
+# Enable automatic fixing for supported rules when running `ruff --fix`.
+fix = false
+
+# Files and directories that Ruff should skip.
+exclude = [
+    ".git",
+    ".venv",
+    "migrations",
+    "__pycache__",
+    "tests",
+]
+
+# Optional: per-file-ignores for specific patterns.
+lint.per-file-ignores = { "*/**/__init__.py" = ["F401"] }
+
+# List of rule codes to enable. You can add or remove as needed.
+lint.select = [
+    "E",   # pycodestyle errors
+    "F",   # Pyflakes checks
+    "W",   # pycodestyle warnings
+    "C90", # mccabe complexity
+    "N",   # pep8-naming conventions
+    "D",   # pydocstyle docstring style
+    "UP",  # pyupgrade modernisation
+    "B",   # flake8-bugbear warnings
+    "A",   # flake8-builtins checks
+]
+
+# Rules to ignore (override any from `select`).
+lint.ignore = [
+    "B008",   # Do not perform function call in argument defaults
+    "E501",   # line too long - handled by `line-length`
+    "D406",   # [*] Section name should end with a newline
+    "D100",   # Missing docstring in public module
+    "D101",   # Missing docstring in public class
+    "D102",   # Missing docstring in public method
+    "D103",   # Missing docstring in public function
+    "D104",   # Missing docstring in public package
+    "D105",   # Missing docstring in magic method
+    "D106",   # Missing docstring in public nested class
+    "D107",   # Missing docstring in `__init__`
+    "D203",   # no blank line before class docstring
+    "D205",   # 1 blank line required between summary line and description
+    "D202",   # [*] No blank lines allowed after function docstring
+    "D213",   # multi-line summary second line
+    "D413",   # [*] Missing blank line after last section
+    "N802",   # Function name `doRollover` should be lowercase
+    "N803",   # Argument name `backupCount` should be lowercase
+    "N815",   # Variable `registrationDate` in class scope should not be mixedCase
+    "TC001",  # Move application import `SubscriptionInfo` into a type-checking block
+    "TC002",  # Move third-party import `pamqp.commands.Basic` into a type-checking block
+    "TC003",  # Move standard library import `datetime.datetime` into a type-checking block
+    "UP037",  # [*] Remove quotes from type annotation
+]
+
+# Additional rules to enable beyond the default set.
+lint.extend-select = [
+    "I",      # isort import sorting
+    "TCH",    # type checking imports
+]
+
+# Optional: enable the preview mode for rules that are still experimental.
+preview = false
+
+
+# ==================================================================
+# MyPy
+# ==================================================================
+
+[tool.mypy]
+# Target Python version
+python_version = "3.13"
+
+mypy_path = ["stubs"]
+
+# General behavior
+follow_imports = "silent"
+warn_unused_configs = true
+ignore_missing_imports = false
+strict_optional = true
+
+# Strictness settings - enable the most common "strict" checks
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_subclassing_any = true
+no_implicit_reexport = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+# Reporting
+show_error_codes = true
+pretty = true
+color_output = false   # set to true if your terminal supports ANSI colors
+
+# Files / modules to exclude from type checking (optional)
+exclude = [
+    "tests/.*",
+    "migrations/.*",
+    "htmlconv/.*",
+    "data/.*",
+]

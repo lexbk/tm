@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+.env
+compose.override.yaml
+
+.agents
+.track
+AGENTS.md
+*code.json*
+.idea
+*.code-workspace
