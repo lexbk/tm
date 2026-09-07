@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import {
+  onMounted,
   reactive,
+  ref,
   watch
 } from 'vue'
+
+import { userApi } from '../api/users'
 
 import type {
   Task,
   TaskPriority,
-  TaskStatus
+  TaskStatus,
+  UserInfo
 } from '../types/api'
 
 const props = defineProps<{
@@ -25,8 +30,26 @@ const form = reactive({
   description: '',
   status: 'TODO' as TaskStatus,
   priority: 'MEDIUM' as TaskPriority,
-  due_date: ''
+  due_date: '',
+  assignee_id: '' as string | ''
 })
+
+const users = ref<UserInfo[]>([])
+const loadingUsers = ref(false)
+
+async function fetchUsers() {
+  loadingUsers.value = true
+  try {
+    const res = await userApi.list({ limit: 100 })
+    users.value = res.data.results
+  } catch {
+    users.value = []
+  } finally {
+    loadingUsers.value = false
+  }
+}
+
+onMounted(fetchUsers)
 
 watch(
   () => props.open,
@@ -44,7 +67,8 @@ watch(
       due_date:
         props.task?.due_date
           ? props.task.due_date.slice(0, 16)
-          : ''
+          : '',
+      assignee_id: props.task?.assignee_id || ''
     })
   }
 )
@@ -54,18 +78,28 @@ function submit() {
     return
   }
 
-  emit('save', {
+  const payload: Record<string, unknown> = {
     title: form.title.trim(),
     description: form.description,
     status: form.status,
-    priority: form.priority,
+    priority: form.priority
+  }
 
-    due_date: form.due_date
-      ? new Date(
-          form.due_date
-        ).toISOString()
-      : null
-  })
+  if (form.assignee_id) {
+    payload.assignee_id = form.assignee_id
+  } else if (props.task?.assignee_id) {
+    payload.assignee_id = null
+  }
+
+  if (form.due_date) {
+    payload.due_date = new Date(
+      form.due_date
+    ).toISOString()
+  } else {
+    payload.due_date = null
+  }
+
+  emit('save', payload)
 }
 </script>
 
@@ -165,6 +199,24 @@ function submit() {
 
             <option value="URGENT">
               URGENT
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Assignee
+
+          <select v-model="form.assignee_id">
+            <option value="">
+              Unassigned
+            </option>
+
+            <option
+              v-for="user in users"
+              :key="user.id"
+              :value="user.id"
+            >
+              {{ user.username }}
             </option>
           </select>
         </label>
