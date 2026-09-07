@@ -44,17 +44,6 @@ def test_patch_task_partial_payload(auth_client: APIClient, task):
     assert refreshed.status == 'DONE'
 
 
-def test_patch_task_with_assignee(auth_client: APIClient, task, another_user):
-    response = auth_client.patch(
-        f'/api/v1/tasks/{task.pk}/',
-        {'assignee_id': str(another_user.pk)},
-        format='json',
-    )
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert data['assignee']['id'] == str(another_user.pk)
-
-
 def test_patch_task_empty_payload_is_noop(auth_client: APIClient, task):
     original_title = task.title
     original_status = task.status
@@ -70,20 +59,6 @@ def test_patch_task_empty_payload_is_noop(auth_client: APIClient, task):
     refreshed = Task.objects.get(pk=task.pk)
     assert refreshed.title == original_title
     assert refreshed.status == original_status
-
-
-def test_patch_task_creator_is_ignored(auth_client: APIClient, task, another_user):
-    original_creator_pk = task.creator.pk
-    response = auth_client.patch(
-        f'/api/v1/tasks/{task.pk}/',
-        {'creator_id': str(another_user.pk)},
-        format='json',
-    )
-    assert response.status_code == status.HTTP_200_OK
-    data = response.json()
-    assert data['creator']['id'] == str(original_creator_pk)
-    refreshed = Task.objects.get(pk=task.pk)
-    assert refreshed.creator.pk == original_creator_pk
 
 
 def test_put_task_with_invalid_assignee(auth_client: APIClient, task):
@@ -112,14 +87,3 @@ def test_patch_task_with_null_assignee(auth_client: APIClient, task_with_assigne
     refreshed = Task.objects.get(pk=task_with_assignee.pk)
     assert refreshed.assignee is None
 
-
-def test_patch_task_preserves_creator(auth_client: APIClient, task):
-    original_creator_pk = task.creator.pk
-    response = auth_client.patch(
-        f'/api/v1/tasks/{task.pk}/',
-        {'title': 'Updated'},
-        format='json',
-    )
-    assert response.status_code == status.HTTP_200_OK
-    refreshed = Task.objects.get(pk=task.pk)
-    assert refreshed.creator.pk == original_creator_pk

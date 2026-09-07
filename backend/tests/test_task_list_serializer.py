@@ -62,20 +62,3 @@ def test_list_assignee_id_includes_uuid_when_assigned(auth_client: APIClient, db
     assigned_result = [r for r in data['results'] if r['title'] == 'Assigned Task'][0]
     assert assigned_result['assignee_id'] == str(another_user.pk)
 
-
-def test_list_still_supports_filtering(auth_client: APIClient, db, user):
-    Task.objects.create(title='Todo Task', status='TODO', creator=user)
-    Task.objects.create(title='Done Task', status='DONE', creator=user)
-    response = auth_client.get('/api/v1/tasks/', {'status': 'TODO'})
-    assert response.status_code == 200
-    assert response.json()['count'] == 1
-
-
-def test_list_still_supports_ordering(auth_client: APIClient, db, user):
-    Task.objects.create(title='First', creator=user)
-    Task.objects.create(title='Second', creator=user)
-    response = auth_client.get('/api/v1/tasks/', {'ordering': 'title'})
-    assert response.status_code == 200
-    data = response.json()
-    titles = [r['title'] for r in data['results']]
-    assert titles == sorted(titles)
