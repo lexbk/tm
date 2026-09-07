@@ -11,7 +11,7 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - "./env:/app/.env"
+      - "./.env:/app/.env"
     networks:
       - tm-net
 
@@ -25,7 +25,7 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - "./env:/app/.env"
+      - "./.env:/app/.env"
       - "backend-data:/app/data"
     networks:
       - tm-net
