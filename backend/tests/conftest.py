@@ -15,7 +15,12 @@ def client() -> APIClient:
 
 
 @pytest.fixture
-def user(db) -> User:
+def clean_db(db) -> None:
+    User.objects.filter(username__in=['user1', 'user2']).delete()
+
+
+@pytest.fixture
+def user(db, clean_db) -> User:
     return User.objects.create_user(
         username='testuser',
         password='testpass123',
@@ -24,7 +29,7 @@ def user(db) -> User:
 
 
 @pytest.fixture
-def another_user(db) -> User:
+def another_user(db, clean_db) -> User:
     return User.objects.create_user(
         username='anotheruser',
         password='anotherpass123',
